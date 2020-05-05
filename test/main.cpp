@@ -3,3 +3,6 @@
 
 #include "catch.hpp"
 
+#include "VectorTest.hpp"
+#include "MatrixTest.hpp"
+#include "MatrixVectorTest.hpp"
