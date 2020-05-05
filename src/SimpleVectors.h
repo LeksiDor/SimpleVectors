@@ -29,13 +29,15 @@ typedef vec<4,Int> Vec4i;
 
 template <size_t DIM, typename T> struct vec
 {
-	vec() { for (size_t i=DIM; i--; data_[i] = T()); }
-	vec<DIM,T>& operator = ( const vec<DIM,T> &v ) { for( size_t i = DIM; i--; this->data_[i] = v[i] ); }
-	T& operator[](const size_t i)       { assert(i<DIM); return data_[i]; }
-	const T& operator[](const size_t i) const { assert(i<DIM); return data_[i]; }
-	template<typename U> vec<DIM,U> toType() const { vec<DIM,U> result; for( size_t i = DIM; i--; result[i] = (U)data_[i] ); return result; }
+	vec() { for (size_t i=DIM; i--; data[i] = T()); }
+	vec<DIM,T>& operator = ( const vec<DIM,T> &v ) { for( size_t i = DIM; i--; this->data[i] = v[i] ); }
+	T& operator [] ( const size_t i )       { assert(i<DIM); return data[i]; }
+	const T& operator [] ( const size_t i ) const { assert(i<DIM); return data[i]; }
+	T& operator () ( const size_t i )       { assert(i<DIM); return data[i]; }
+	const T& operator () ( const size_t i ) const { assert(i<DIM); return data[i]; }
+	template<typename U> vec<DIM,U> toType() const { vec<DIM,U> result; for( size_t i = DIM; i--; result[i] = (U)data[i] ); return result; }
 private:
-	T data_[DIM];
+	T data[DIM];
 };
 
 
@@ -44,13 +46,19 @@ template <typename T> struct vec<2,T>
 	vec() noexcept : x(T()), y(T()) {}
 	vec( const T &X, const T &Y ) noexcept : x(X), y(Y) {}
 	vec<2,T>& operator = (const vec<2,T> &v) { x=v.x; y=v.y; return *this; }
-	T& operator[](const size_t i)       { assert(i<2); return i<=0 ? x : y; }
-	const T& operator[](const size_t i) const { assert(i<2); return i<=0 ? x : y; }
+	T& operator [] ( const size_t i )       { assert(i<2); return data[i]; }
+	const T& operator [] ( const size_t i ) const { assert(i<2); return data[i]; }
+	T& operator () ( const size_t i )       { assert(i<2); return data[i]; }
+	const T& operator () ( const size_t i ) const { assert(i<2); return data[i]; }
 	template<typename U> vec<2,U> toType() const { return vec<2,U>(x,y); }
 	T norm() const { return std::sqrt(x*x+y*y); }
 	vec<2,T>& normalize() { *this = (*this)/norm(); return *this; }
 	vec<2,T> normalized() const { return (*this)/norm(); }
-	T x,y;
+	union
+	{
+		T data[2];
+		struct { T x; T y; };
+	};
 };
 
 
@@ -60,14 +68,17 @@ template <typename T> struct vec<3,T>
 	vec( const T &X, const T &Y, const T &Z ) noexcept : x(X), y(Y), z(Z) {}
 	vec( const vec<2,T>& XY, const T& Z = (T)0 ) noexcept : x(XY.x), y(XY.y), z(Z) {}
 	vec<3,T>& operator = (const vec<3,T> &v) { x=v.x; y=v.y; z=v.z; return *this; }
-	T& operator[](const size_t i)       { assert(i<3); return i<=0 ? x : (1==i ? y : z); }
-	const T& operator[](const size_t i) const { assert(i<3); return i<=0 ? x : (1==i ? y : z); }
+	T& operator [] ( const size_t i )       { assert(i<3); return data[i]; }
+	const T& operator [] ( const size_t i ) const { assert(i<3); return data[i]; }
+	T& operator () ( const size_t i )       { assert(i<3); return data[i]; }
+	const T& operator () ( const size_t i ) const { assert(i<3); return data[i]; }
 	template<typename U> vec<3,U> const toType() { return vec<3,U>(x,y,z); }
 	T norm() const { return std::sqrt(x*x+y*y+z*z); }
 	vec<3,T>& normalize() { *this = (*this)/norm(); return *this; }
 	vec<3,T> normalized() const { return (*this)/norm(); }
 	union
 	{
+		T data[3];
 		struct { T x; T y; T z; };
 		struct { vec<2,T> xy; T z; };
 		struct { T x; vec<2,T> yz; };
@@ -83,14 +94,17 @@ template <typename T> struct vec<4,T>
 	vec( const vec<2,T>& XY, const vec<2,T>& ZW ) noexcept : x(XY.x), y(XY.y), z(ZW.x), w(ZW.y) {}
 	vec( const vec<3,T>& XYZ, const T& W = (T)0 ) noexcept : x(XYZ.x), y(XYZ.y), z(XYZ.z), w(W) {}
 	vec<4,T>& operator = (const vec<4,T> &v) { x=v.x; y=v.y; z=v.z; w=v.w; return *this; }
-	T& operator[](const size_t i)       { assert(i<4); return i<=0 ? x : (1==i ? y : (2==i ? z : w)); }
-	const T& operator[](const size_t i) const { assert(i<4); return i<=0 ? x : (1==i ? y : (2==i ? z : w)); }
+	T& operator [] ( const size_t i )       { assert(i<4); return data[i]; }
+	const T& operator [] ( const size_t i ) const { assert(i<4); return data[i]; }
+	T& operator () ( const size_t i )       { assert(i<4); return data[i]; }
+	const T& operator () ( const size_t i ) const { assert(i<4); return data[i]; }
 	template<typename U> vec<4,U> toType() const { return vec<4,U>(x,y,z,w); }
 	T norm() const { return std::sqrt(x*x+y*y+z*z+w*w); }
 	vec<4,T>& normalize() { *this = (*this)/norm(); return *this; }
 	vec<4,T> normalized() const { return (*this)/norm(); }
 	union
 	{
+		T data[4];
 		struct { T x; T y; T z; T w; };
 		struct { vec<2,T> xy; vec<2,T> zw; };
 		struct { vec<3,T> xyz; T w; };
@@ -107,14 +121,14 @@ template<size_t DIM,typename T> T dot( const vec<DIM,T>& lhs, const vec<DIM,T>& 
 }
 
 
-template<size_t DIM,typename T>vec<DIM,T> operator + ( vec<DIM,T> lhs, const vec<DIM,T> &rhs )
+template<size_t DIM,typename T> vec<DIM,T> operator + ( vec<DIM,T> lhs, const vec<DIM,T> &rhs )
 {
 	for (size_t i=DIM; i--; lhs[i]+=rhs[i]);
 	return lhs;
 }
 
 
-template<size_t DIM,typename T>vec<DIM,T> operator - ( vec<DIM,T> lhs, const vec<DIM,T>& rhs)
+template<size_t DIM,typename T> vec<DIM,T> operator - ( vec<DIM,T> lhs, const vec<DIM,T>& rhs)
 {
 	for (size_t i=DIM; i--; lhs[i]-=rhs[i]);
 	return lhs;
