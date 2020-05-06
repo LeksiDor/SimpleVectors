@@ -25,7 +25,6 @@ template <size_t ROWS, size_t COLS, typename T> struct mat
 	static mat<ROWS,COLS,T> zero() { return mat<ROWS,COLS,T>(); }
 	vec<COLS,T> row( const size_t i ) const { vec<COLS,T> v; for( size_t j = COLS; j--; v[j] = data[i*COLS+j] ); return v; }
 	vec<ROWS,T> column( const size_t j ) const { vec<ROWS,T> v; for( size_t i = ROWS; i--; v[i] = data[i*COLS+j] ); return v; }
-private:
 	T data[ROWS*COLS];
 };
 
@@ -44,11 +43,16 @@ template <typename T> struct mat<2,2,T>
 	static mat<2,2,T> rotation( const T& angle );
 	static mat<2,2,T> diagonalize( const vec<2,T>& diagonal ) { return mat<2,2,T>( diagonal.x, 0, 0, diagonal.y ); }
 	static mat<2,2,T> diagonalize( const T& x, const T& y ) { return mat<2,2,T>( x, 0, 0, y ); }
-	vec<2,T> row( const size_t i ) const { vec<2,T> v; for( size_t j = 2; j--; v[j] = data[i*2+j] ); return v; }
-	vec<2,T> column( const size_t j ) const { vec<2,T> v; for( size_t i = 2; i--; v[i] = data[i*2+j] ); return v; }
+	vec<2,T> row( const size_t i ) const { assert(i<2); return rows[i]; }
+	vec<2,T> column( const size_t j ) const { assert(j<2); vec<2,T> v; for( size_t i = 2; i--; v[i] = data[i*2+j] ); return v; }
 	mat<2,2,T> inverse() const;
-private:
-	T data[4];
+	union
+	{
+		T data[4];
+		struct { T xx; T xy; T yx; T yy; };
+		struct { vec<2,T> rowX; vec<2,T> rowY; };
+		vec<2,T> rows[2];
+	};
 };
 
 
@@ -76,11 +80,16 @@ template <typename T> struct mat<3,3,T>
 		x, 0, 0,
 		0, y, 0,
 		0, 0, z); }
-	vec<3,T> row( const size_t i ) const { vec<3,T> v; for( size_t j = 3; j--; v[j] = data[i*3+j] ); return v; }
+	vec<3,T> row( const size_t i ) const { assert(i<3); return rows[i]; }
 	vec<3,T> column( const size_t j ) const { vec<3,T> v; for( size_t i = 3; i--; v[i] = data[i*3+j] ); return v; }
 	mat<3,3,T> inverse() const;
-private:
-	T data[9];
+	union
+	{
+		T data[9];
+		struct { T xx; T xy; T xz; T yx; T yy; T yz; T zx; T zy; T zz; };
+		struct { vec<3,T> rowX; vec<3,T> rowY; vec<3,T> rowZ; };
+		vec<3,T> rows[3];
+	};
 };
 
 
@@ -111,11 +120,16 @@ template <typename T> struct mat<4,4,T>
 		0, y, 0, 0,
 		0, 0, z, 0,
 		0, 0, 0, w); }
-	vec<4,T> row( const size_t i ) const { vec<4,T> v; for( size_t j = 4; j--; v[j] = data[i*4+j] ); return v; }
+	vec<4,T> row( const size_t i ) const { assert(i<4); return rows[i]; }
 	vec<4,T> column( const size_t j ) const { vec<4,T> v; for( size_t i = 4; i--; v[i] = data[i*4+j] ); return v; }
 	mat<4,4,T> inverse() const;
-private:
-	T data[16];
+	union
+	{
+		T data[16];
+		struct { T xx; T xy; T xz; T xw; T yx; T yy; T yz; T yw; T zx; T zy; T zz; T zw; T wx; T wy; T wz; T ww; };
+		struct { vec<4,T> rowX; vec<4,T> rowY; vec<4,T> rowZ; vec<4,T> rowW; };
+		vec<4,T> rows[4];
+	};
 };
 
 

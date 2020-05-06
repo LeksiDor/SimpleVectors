@@ -26,23 +26,20 @@ void CheckVec4( const Vec4& v, const Vec4& ref )
 
 void CheckMat22( const Mat22& m, const Mat22& ref )
 {
-	for ( int i = 0; i < 2; ++i )
-		for ( int j = 0; j < 2; ++j )
-			REQUIRE( m(i,j) == Approx(ref(i,j)) );
+	for ( int i = 0; i < 4; ++i )
+		REQUIRE( m.data[i] == Approx(ref.data[i]) );
 }
 
 
 void CheckMat33( const Mat33& m, const Mat33& ref )
 {
-	for ( int i = 0; i < 3; ++i )
-		for ( int j = 0; j < 3; ++j )
-			REQUIRE( m(i,j) == Approx(ref(i,j)) );
+	for ( int i = 0; i < 9; ++i )
+		REQUIRE( m.data[i] == Approx(ref.data[i]) );
 }
 
 
 void CheckMat44( const Mat44& m, const Mat44& ref )
 {
-	for ( int i = 0; i < 4; ++i )
-		for ( int j = 0; j < 4; ++j )
-			REQUIRE( m(i,j) == Approx(ref(i,j)) );
+	for ( int i = 0; i < 16; ++i )
+		REQUIRE( m.data[i] == Approx(ref.data[i]) );
 }
