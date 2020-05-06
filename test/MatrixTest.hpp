@@ -1,6 +1,5 @@
-#include "catch.hpp"
+#include "catchhelpers.hpp"
 
-#include "SimpleMatrices.h"
 
 TEST_CASE( "Matrix", "[Mat22]" )
 {

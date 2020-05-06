@@ -1,4 +1,8 @@
+#ifndef CATCHHELPERS_H
+#define CATCHHELPERS_H
+
 #include "catch.hpp"
+
 #include "SimpleVectors.h"
 #include "SimpleMatrices.h"
 
@@ -43,3 +47,5 @@ void CheckMat44( const Mat44& m, const Mat44& ref )
 	for ( int i = 0; i < 16; ++i )
 		REQUIRE( m.data[i] == Approx(ref.data[i]) );
 }
+
+#endif // CATCHHELPERS_H
