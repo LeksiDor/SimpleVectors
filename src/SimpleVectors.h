@@ -31,9 +31,9 @@ template <size_t DIM, typename T> struct vec
 {
 	vec() { for (size_t i=DIM; i--; data[i] = T()); }
 	vec<DIM,T>& operator = ( const vec<DIM,T> &v ) { for( size_t i = DIM; i--; this->data[i] = v[i] ); }
-	T& operator [] ( const size_t i )       { assert(i<DIM); return data[i]; }
+	      T& operator [] ( const size_t i )       { assert(i<DIM); return data[i]; }
 	const T& operator [] ( const size_t i ) const { assert(i<DIM); return data[i]; }
-	T& operator () ( const size_t i )       { assert(i<DIM); return data[i]; }
+	      T& operator () ( const size_t i )       { assert(i<DIM); return data[i]; }
 	const T& operator () ( const size_t i ) const { assert(i<DIM); return data[i]; }
 	template<typename U> vec<DIM,U> toType() const { vec<DIM,U> result; for( size_t i = DIM; i--; result[i] = (U)data[i] ); return result; }
 private:
@@ -46,9 +46,9 @@ template <typename T> struct vec<2,T>
 	vec() noexcept : x(T()), y(T()) {}
 	vec( const T &X, const T &Y ) noexcept : x(X), y(Y) {}
 	vec<2,T>& operator = (const vec<2,T> &v) { x=v.x; y=v.y; return *this; }
-	T& operator [] ( const size_t i )       { assert(i<2); return data[i]; }
+	      T& operator [] ( const size_t i )       { assert(i<2); return data[i]; }
 	const T& operator [] ( const size_t i ) const { assert(i<2); return data[i]; }
-	T& operator () ( const size_t i )       { assert(i<2); return data[i]; }
+	      T& operator () ( const size_t i )       { assert(i<2); return data[i]; }
 	const T& operator () ( const size_t i ) const { assert(i<2); return data[i]; }
 	template<typename U> vec<2,U> toType() const { return vec<2,U>(x,y); }
 	T norm() const { return std::sqrt(x*x+y*y); }
@@ -68,9 +68,9 @@ template <typename T> struct vec<3,T>
 	vec( const T &X, const T &Y, const T &Z ) noexcept : x(X), y(Y), z(Z) {}
 	vec( const vec<2,T>& XY, const T& Z = (T)0 ) noexcept : x(XY.x), y(XY.y), z(Z) {}
 	vec<3,T>& operator = (const vec<3,T> &v) { x=v.x; y=v.y; z=v.z; return *this; }
-	T& operator [] ( const size_t i )       { assert(i<3); return data[i]; }
+	      T& operator [] ( const size_t i )       { assert(i<3); return data[i]; }
 	const T& operator [] ( const size_t i ) const { assert(i<3); return data[i]; }
-	T& operator () ( const size_t i )       { assert(i<3); return data[i]; }
+	      T& operator () ( const size_t i )       { assert(i<3); return data[i]; }
 	const T& operator () ( const size_t i ) const { assert(i<3); return data[i]; }
 	template<typename U> vec<3,U> const toType() { return vec<3,U>(x,y,z); }
 	T norm() const { return std::sqrt(x*x+y*y+z*z); }
@@ -94,9 +94,9 @@ template <typename T> struct vec<4,T>
 	vec( const vec<2,T>& XY, const vec<2,T>& ZW ) noexcept : x(XY.x), y(XY.y), z(ZW.x), w(ZW.y) {}
 	vec( const vec<3,T>& XYZ, const T& W = (T)0 ) noexcept : x(XYZ.x), y(XYZ.y), z(XYZ.z), w(W) {}
 	vec<4,T>& operator = (const vec<4,T> &v) { x=v.x; y=v.y; z=v.z; w=v.w; return *this; }
-	T& operator [] ( const size_t i )       { assert(i<4); return data[i]; }
+	      T& operator [] ( const size_t i )       { assert(i<4); return data[i]; }
 	const T& operator [] ( const size_t i ) const { assert(i<4); return data[i]; }
-	T& operator () ( const size_t i )       { assert(i<4); return data[i]; }
+	      T& operator () ( const size_t i )       { assert(i<4); return data[i]; }
 	const T& operator () ( const size_t i ) const { assert(i<4); return data[i]; }
 	template<typename U> vec<4,U> toType() const { return vec<4,U>(x,y,z,w); }
 	T norm() const { return std::sqrt(x*x+y*y+z*z+w*w); }
