@@ -17,54 +17,54 @@ typedef affine3<Real> Affine3;
 
 template <size_t ROWS, size_t COLS, typename T> struct mat
 {
-	mat() { for ( size_t i = ROWS; i--; ) { for ( size_t j = COLS; j--; data_[i][j] = T() ); } }
-	mat<ROWS,COLS,T> &operator = ( const mat<ROWS, COLS, T>& m ) { for ( size_t i = 0; i < ROWS; ++i ) { for ( size_t j = COLS; j--; data_[i][j] = m.data_[i][j] ); } return *this; }
-	T& operator () ( const size_t i, const size_t j )       { assert(i<ROWS); assert(j<COLS); return data_[i][j]; }
-	const T& operator () ( const size_t i, const size_t j ) const { assert(i<ROWS); assert(j<COLS); return data_[i][j]; }
+	mat() { for ( size_t i = ROWS; i--; ) { for ( size_t j = COLS; j--; data[i*COLS+j] = T() ); } }
+	mat<ROWS,COLS,T> &operator = ( const mat<ROWS, COLS, T>& m ) { for ( size_t i = 0; i < ROWS*COLS; ++i ) data[i] = m.data[i]; return *this; }
+	      T& operator () ( const size_t i, const size_t j )       { assert(i<ROWS); assert(j<COLS); return data[i*COLS+j]; }
+	const T& operator () ( const size_t i, const size_t j ) const { assert(i<ROWS); assert(j<COLS); return data[i*COLS+j]; }
 	static mat<ROWS,COLS,T> identity() { mat<ROWS,COLS,T> res; for ( size_t i = ROWS; i--; res(i,i) = (T)1 ); return res; }
 	static mat<ROWS,COLS,T> zero() { return mat<ROWS,COLS,T>(); }
-	vec<COLS,T> row( const size_t i ) const { vec<COLS,T> v; for( size_t j = COLS; j--; v[j] = data_[i][j] ); return v; }
-	vec<ROWS,T> column( const size_t j ) const { vec<ROWS,T> v; for( size_t i = ROWS; i--; v[i] = data_[i][j] ); return v; }
+	vec<COLS,T> row( const size_t i ) const { vec<COLS,T> v; for( size_t j = COLS; j--; v[j] = data[i*COLS+j] ); return v; }
+	vec<ROWS,T> column( const size_t j ) const { vec<ROWS,T> v; for( size_t i = ROWS; i--; v[i] = data[i*COLS+j] ); return v; }
 private:
-	T data_[ROWS][COLS];
+	T data[ROWS*COLS];
 };
 
 
 template <typename T> struct mat<2,2,T>
 {
-	mat() { (*this)(0,0) = (*this)(0,1) = (*this)(1,0) = (*this)(1,1) = (T)0; }
+	mat() { for ( size_t i = 0; i < 4; ++i ) data[i] = T(); }
 	mat( const T& m00, const T& m01, const T& m10, const T& m11 )
 	{ (*this)(0,0) = m00; (*this)(0,1) = m01; (*this)(1,0) = m10; (*this)(1,1) = m11; }
 	mat( const vec<2,T>& col0, const vec<2,T>& col1 ) : mat(col0.x,col1.x,col0.y,col1.y) {}
-	mat<2,2,T> &operator = ( const mat<2,2,T> &m ) { for ( size_t i = 0; i < 2; ++i ) { for ( size_t j = 2; j--; data_[i][j] = m.data_[i][j] ); } return *this; }
-	T& operator () ( const size_t i, const size_t j )       { assert(i<2); assert(j<2); return data_[i][j]; }
-	const T& operator () ( const size_t i, const size_t j ) const { assert(i<2); assert(j<2); return data_[i][j]; }
+	mat<2,2,T> &operator = ( const mat<2,2,T> &m ) { for ( size_t i = 0; i < 4; ++i ) data[i] = m.data[i]; return *this; }
+	      T& operator () ( const size_t i, const size_t j )       { assert(i<2); assert(j<2); return data[i*2+j]; }
+	const T& operator () ( const size_t i, const size_t j ) const { assert(i<2); assert(j<2); return data[i*2+j]; }
 	static mat<2,2,T> identity() { mat<2,2,T> res; for ( size_t i = 2; i--; res(i,i) = (T)1 ); return res; }
 	static mat<2,2,T> zero() { return mat<2,2,T>(); }
 	static mat<2,2,T> rotation( const T& angle );
 	static mat<2,2,T> diagonalize( const vec<2,T>& diagonal ) { return mat<2,2,T>( diagonal.x, 0, 0, diagonal.y ); }
 	static mat<2,2,T> diagonalize( const T& x, const T& y ) { return mat<2,2,T>( x, 0, 0, y ); }
-	vec<2,T> row( const size_t i ) const { vec<2,T> v; for( size_t j = 2; j--; v[j] = data_[i][j] ); return v; }
-	vec<2,T> column( const size_t j ) const { vec<2,T> v; for( size_t i = 2; i--; v[i] = data_[i][j] ); return v; }
+	vec<2,T> row( const size_t i ) const { vec<2,T> v; for( size_t j = 2; j--; v[j] = data[i*2+j] ); return v; }
+	vec<2,T> column( const size_t j ) const { vec<2,T> v; for( size_t i = 2; i--; v[i] = data[i*2+j] ); return v; }
 	mat<2,2,T> inverse() const;
 private:
-	T data_[2][2];
+	T data[4];
 };
 
 
 template <typename T> struct mat<3,3,T>
 {
-	mat() { for ( size_t i = 3; i--; ) { for ( size_t j = 3; j--; data_[i][j] = T() ); } }
+	mat() { for ( size_t i = 0; i < 9; ++i ) data[i] = T(); }
 	mat( const T& m00, const T& m01, const T& m02,
-		const T& m10, const T& m11, const T& m12,
-		const T& m20, const T& m21, const T& m22 )
+		 const T& m10, const T& m11, const T& m12,
+		 const T& m20, const T& m21, const T& m22 )
 	{ (*this)(0,0) = m00; (*this)(0,1) = m01; (*this)(0,2) = m02;
 	(*this)(1,0) = m10; (*this)(1,1) = m11; (*this)(1,2) = m12;
 	(*this)(2,0) = m20; (*this)(2,1) = m21; (*this)(2,2) = m22; }
 	mat( const vec<3,T>& col0, const vec<3,T>& col1, const vec<3,T>& col2 ) : mat(col0.x,col1.x,col2.x,col0.y,col1.y,col2.y,col0.z,col1.z,col2.z) {}
-	mat<3,3,T> &operator = ( const mat<3,3,T> &m ) { for ( size_t i = 0; i < 3; ++i ) { for ( size_t j = 3; j--; data_[i][j] = m.data_[i][j] ); } return *this; }
-	T& operator () ( const size_t i, const size_t j )       { assert(i<3); assert(j<3); return data_[i][j]; }
-	const T& operator () ( const size_t i, const size_t j ) const { assert(i<3); assert(j<3); return data_[i][j]; }
+	mat<3,3,T> &operator = ( const mat<3,3,T> &m ) { for ( size_t i = 0; i < 9; ++i ) data[i] = m.data[i]; return *this; }
+	      T& operator () ( const size_t i, const size_t j )       { assert(i<3); assert(j<3); return data[i*3+j]; }
+	const T& operator () ( const size_t i, const size_t j ) const { assert(i<3); assert(j<3); return data[i*3+j]; }
 	static mat<3,3,T> identity() { mat<3,3,T> res; for ( size_t i = 3; i--; res(i,i) = (T)1 ); return res; }
 	static mat<3,3,T> zero() { return mat<3,3,T>(); }
 	static mat<3,3,T> rotation( const vec<3,T>& angle ); // Rotation as R=Rz*Ry*Rx, where Ra is rotation around axis a.
@@ -76,29 +76,29 @@ template <typename T> struct mat<3,3,T>
 		x, 0, 0,
 		0, y, 0,
 		0, 0, z); }
-	vec<3,T> row( const size_t i ) const { vec<3,T> v; for( size_t j = 3; j--; v[j] = data_[i][j] ); return v; }
-	vec<3,T> column( const size_t j ) const { vec<3,T> v; for( size_t i = 3; i--; v[i] = data_[i][j] ); return v; }
+	vec<3,T> row( const size_t i ) const { vec<3,T> v; for( size_t j = 3; j--; v[j] = data[i*3+j] ); return v; }
+	vec<3,T> column( const size_t j ) const { vec<3,T> v; for( size_t i = 3; i--; v[i] = data[i*3+j] ); return v; }
 	mat<3,3,T> inverse() const;
 private:
-	T data_[3][3];
+	T data[9];
 };
 
 
 template <typename T> struct mat<4,4,T>
 {
-	mat() { for ( size_t i = 4; i--; ) { for ( size_t j = 4; j--; data_[i][j] = T() ); } }
+	mat() { for ( size_t i = 0; i < 16; ++i ) data[i] = T(); }
 	mat( const T& m00, const T& m01, const T& m02, const T& m03,
-		const T& m10, const T& m11, const T& m12, const T& m13,
-		const T& m20, const T& m21, const T& m22, const T& m23,
-		const T& m30, const T& m31, const T& m32, const T& m33)
+		 const T& m10, const T& m11, const T& m12, const T& m13,
+		 const T& m20, const T& m21, const T& m22, const T& m23,
+		 const T& m30, const T& m31, const T& m32, const T& m33)
 	{ (*this)(0,0) = m00; (*this)(0,1) = m01; (*this)(0,2) = m02; (*this)(0,3) = m03;
 	(*this)(1,0) = m10; (*this)(1,1) = m11; (*this)(1,2) = m12; (*this)(0,3) = m13;
 	(*this)(2,0) = m20; (*this)(2,1) = m21; (*this)(2,2) = m22; (*this)(0,3) = m23;
 	(*this)(3,0) = m30; (*this)(3,1) = m31; (*this)(3,2) = m32; (*this)(3,3) = m33; }
 	mat( const vec<4,T>& col0, const vec<4,T>& col1, const vec<4,T>& col2, const vec<4,T>& col3 ) : mat(col0.x,col1.x,col2.x,col3.x,col0.y,col1.y,col2.y,col3.y,col0.z,col1.z,col2.z,col3.z,col0.w,col1.w,col2.w,col3.w) {}
-	mat<4,4,T> &operator = ( const mat<4,4,T> &m ) { for ( size_t i = 0; i < 4; ++i ) { for ( size_t j = 4; j--; data_[i][j] = m.data_[i][j] ); } return *this; }
-	T& operator () ( const size_t i, const size_t j )       { assert(i<4); assert(j<4); return data_[i][j]; }
-	const T& operator () ( const size_t i, const size_t j ) const { assert(i<4); assert(j<4); return data_[i][j]; }
+	mat<4,4,T> &operator = ( const mat<4,4,T> &m ) { for ( size_t i = 0; i < 16; ++i ) data[i] = m.data[i]; return *this; }
+	      T& operator () ( const size_t i, const size_t j )       { assert(i<4); assert(j<4); return data[i*4+j]; }
+	const T& operator () ( const size_t i, const size_t j ) const { assert(i<4); assert(j<4); return data[i*4+j]; }
 	static mat<4,4,T> identity() { mat<4,4,T> res; for ( size_t i = 4; i--; res(i,i) = (T)1 ); return res; }
 	static mat<4,4,T> zero() { return mat<4,4,T>(); }
 	static mat<4,4,T> diagonalize( const vec<4,T>& diagonal ) { return mat<4,4,T>(
@@ -111,11 +111,11 @@ template <typename T> struct mat<4,4,T>
 		0, y, 0, 0,
 		0, 0, z, 0,
 		0, 0, 0, w); }
-	vec<4,T> row( const size_t i ) const { vec<4,T> v; for( size_t j = 4; j--; v[j] = data_[i][j] ); return v; }
-	vec<4,T> column( const size_t j ) const { vec<4,T> v; for( size_t i = 4; i--; v[i] = data_[i][j] ); return v; }
+	vec<4,T> row( const size_t i ) const { vec<4,T> v; for( size_t j = 4; j--; v[j] = data[i*4+j] ); return v; }
+	vec<4,T> column( const size_t j ) const { vec<4,T> v; for( size_t i = 4; i--; v[i] = data[i*4+j] ); return v; }
 	mat<4,4,T> inverse() const;
 private:
-	T data_[4][4];
+	T data[16];
 };
 
 
